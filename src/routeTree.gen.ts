@@ -21,6 +21,7 @@ import { Route as AuthenticatedPanelVentasRouteImport } from './routes/_authenti
 import { Route as AuthenticatedPanelGerenteCategoriasRouteImport } from './routes/_authenticated/_panel/_gerente/categorias'
 import { Route as AuthenticatedPanelGerenteClientesRouteImport } from './routes/_authenticated/_panel/_gerente/clientes'
 import { Route as AuthenticatedPanelGerenteDashboardRouteImport } from './routes/_authenticated/_panel/_gerente/dashboard'
+import { Route as AuthenticatedPanelGerenteReportesRouteImport } from './routes/_authenticated/_panel/_gerente/reportes'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -85,6 +86,12 @@ const AuthenticatedPanelGerenteDashboardRoute =
     path: '/dashboard',
     getParentRoute: () => AuthenticatedPanelGerenteRouteRoute,
   } as any)
+const AuthenticatedPanelGerenteReportesRoute =
+  AuthenticatedPanelGerenteReportesRouteImport.update({
+    id: '/reportes',
+    path: '/reportes',
+    getParentRoute: () => AuthenticatedPanelGerenteRouteRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -96,6 +103,7 @@ export interface FileRoutesByFullPath {
   '/categorias': typeof AuthenticatedPanelGerenteCategoriasRoute
   '/clientes': typeof AuthenticatedPanelGerenteClientesRoute
   '/dashboard': typeof AuthenticatedPanelGerenteDashboardRoute
+  '/reportes': typeof AuthenticatedPanelGerenteReportesRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -107,6 +115,7 @@ export interface FileRoutesByTo {
   '/categorias': typeof AuthenticatedPanelGerenteCategoriasRoute
   '/clientes': typeof AuthenticatedPanelGerenteClientesRoute
   '/dashboard': typeof AuthenticatedPanelGerenteDashboardRoute
+  '/reportes': typeof AuthenticatedPanelGerenteReportesRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -122,6 +131,7 @@ export interface FileRoutesById {
   '/_authenticated/_panel/_gerente/categorias': typeof AuthenticatedPanelGerenteCategoriasRoute
   '/_authenticated/_panel/_gerente/clientes': typeof AuthenticatedPanelGerenteClientesRoute
   '/_authenticated/_panel/_gerente/dashboard': typeof AuthenticatedPanelGerenteDashboardRoute
+  '/_authenticated/_panel/_gerente/reportes': typeof AuthenticatedPanelGerenteReportesRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -135,6 +145,7 @@ export interface FileRouteTypes {
     | '/categorias'
     | '/clientes'
     | '/dashboard'
+    | '/reportes'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -146,6 +157,7 @@ export interface FileRouteTypes {
     | '/categorias'
     | '/clientes'
     | '/dashboard'
+    | '/reportes'
   id:
     | '__root__'
     | '/'
@@ -160,6 +172,7 @@ export interface FileRouteTypes {
     | '/_authenticated/_panel/_gerente/categorias'
     | '/_authenticated/_panel/_gerente/clientes'
     | '/_authenticated/_panel/_gerente/dashboard'
+    | '/_authenticated/_panel/_gerente/reportes'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -255,6 +268,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedPanelGerenteDashboardRouteImport
       parentRoute: typeof AuthenticatedPanelGerenteRouteRoute
     }
+    '/_authenticated/_panel/_gerente/reportes': {
+      id: '/_authenticated/_panel/_gerente/reportes'
+      path: '/reportes'
+      fullPath: '/reportes'
+      preLoaderRoute: typeof AuthenticatedPanelGerenteReportesRouteImport
+      parentRoute: typeof AuthenticatedPanelGerenteRouteRoute
+    }
   }
 }
 
@@ -262,6 +282,7 @@ interface AuthenticatedPanelGerenteRouteRouteChildren {
   AuthenticatedPanelGerenteCategoriasRoute: typeof AuthenticatedPanelGerenteCategoriasRoute
   AuthenticatedPanelGerenteClientesRoute: typeof AuthenticatedPanelGerenteClientesRoute
   AuthenticatedPanelGerenteDashboardRoute: typeof AuthenticatedPanelGerenteDashboardRoute
+  AuthenticatedPanelGerenteReportesRoute: typeof AuthenticatedPanelGerenteReportesRoute
 }
 
 const AuthenticatedPanelGerenteRouteRouteChildren: AuthenticatedPanelGerenteRouteRouteChildren =
@@ -272,6 +293,8 @@ const AuthenticatedPanelGerenteRouteRouteChildren: AuthenticatedPanelGerenteRout
       AuthenticatedPanelGerenteClientesRoute,
     AuthenticatedPanelGerenteDashboardRoute:
       AuthenticatedPanelGerenteDashboardRoute,
+    AuthenticatedPanelGerenteReportesRoute:
+      AuthenticatedPanelGerenteReportesRoute,
   }
 
 const AuthenticatedPanelGerenteRouteRouteWithChildren =
