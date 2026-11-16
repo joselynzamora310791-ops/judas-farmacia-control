@@ -29,11 +29,17 @@ function ResetPassword() {
 
   const enviar = async (e: FormEvent) => {
     e.preventDefault();
-    if (password !== confirmar) return toast.error("Las contraseñas no coinciden");
+    if (password !== confirmar) {
+      toast.error("Las contraseñas no coinciden");
+      return;
+    }
     setCargando(true);
     const { error } = await supabase.auth.updateUser({ password });
     setCargando(false);
-    if (error) return toast.error(error.message);
+    if (error) {
+      toast.error(error.message);
+      return;
+    }
     toast.success("Contraseña actualizada");
     navigate({ to: "/auth", search: { redirect: undefined } });
   };
