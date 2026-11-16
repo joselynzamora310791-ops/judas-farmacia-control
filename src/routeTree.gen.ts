@@ -10,33 +10,176 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
+import { Route as AuthRouteImport } from './routes/auth'
+import { Route as ResetPasswordRouteImport } from './routes/reset-password'
+import { Route as AuthenticatedPanelRouteRouteImport } from './routes/_authenticated/_panel/route'
+import { Route as AuthenticatedSinAccesoRouteImport } from './routes/_authenticated/sin-acceso'
+import { Route as AuthenticatedPanelGerenteRouteRouteImport } from './routes/_authenticated/_panel/_gerente/route'
+import { Route as AuthenticatedPanelProductosRouteImport } from './routes/_authenticated/_panel/productos'
+import { Route as AuthenticatedPanelVentasRouteImport } from './routes/_authenticated/_panel/ventas'
+import { Route as AuthenticatedPanelGerenteCategoriasRouteImport } from './routes/_authenticated/_panel/_gerente/categorias'
+import { Route as AuthenticatedPanelGerenteClientesRouteImport } from './routes/_authenticated/_panel/_gerente/clientes'
+import { Route as AuthenticatedPanelGerenteDashboardRouteImport } from './routes/_authenticated/_panel/_gerente/dashboard'
+import { Route as AuthenticatedPanelGerenteReportesRouteImport } from './routes/_authenticated/_panel/_gerente/reportes'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
+  id: '/_authenticated',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthRoute = AuthRouteImport.update({
+  id: '/auth',
+  path: '/auth',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ResetPasswordRoute = ResetPasswordRouteImport.update({
+  id: '/reset-password',
+  path: '/reset-password',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthenticatedPanelRouteRoute = AuthenticatedPanelRouteRouteImport.update({
+  id: '/_panel',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedSinAccesoRoute = AuthenticatedSinAccesoRouteImport.update({
+  id: '/sin-acceso',
+  path: '/sin-acceso',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedPanelGerenteRouteRoute =
+  AuthenticatedPanelGerenteRouteRouteImport.update({
+    id: '/_gerente',
+    getParentRoute: () => AuthenticatedPanelRouteRoute,
+  } as any)
+const AuthenticatedPanelProductosRoute =
+  AuthenticatedPanelProductosRouteImport.update({
+    id: '/productos',
+    path: '/productos',
+    getParentRoute: () => AuthenticatedPanelRouteRoute,
+  } as any)
+const AuthenticatedPanelVentasRoute =
+  AuthenticatedPanelVentasRouteImport.update({
+    id: '/ventas',
+    path: '/ventas',
+    getParentRoute: () => AuthenticatedPanelRouteRoute,
+  } as any)
+const AuthenticatedPanelGerenteCategoriasRoute =
+  AuthenticatedPanelGerenteCategoriasRouteImport.update({
+    id: '/categorias',
+    path: '/categorias',
+    getParentRoute: () => AuthenticatedPanelGerenteRouteRoute,
+  } as any)
+const AuthenticatedPanelGerenteClientesRoute =
+  AuthenticatedPanelGerenteClientesRouteImport.update({
+    id: '/clientes',
+    path: '/clientes',
+    getParentRoute: () => AuthenticatedPanelGerenteRouteRoute,
+  } as any)
+const AuthenticatedPanelGerenteDashboardRoute =
+  AuthenticatedPanelGerenteDashboardRouteImport.update({
+    id: '/dashboard',
+    path: '/dashboard',
+    getParentRoute: () => AuthenticatedPanelGerenteRouteRoute,
+  } as any)
+const AuthenticatedPanelGerenteReportesRoute =
+  AuthenticatedPanelGerenteReportesRouteImport.update({
+    id: '/reportes',
+    path: '/reportes',
+    getParentRoute: () => AuthenticatedPanelGerenteRouteRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/auth': typeof AuthRoute
+  '/reset-password': typeof ResetPasswordRoute
+  '/sin-acceso': typeof AuthenticatedSinAccesoRoute
+  '/productos': typeof AuthenticatedPanelProductosRoute
+  '/ventas': typeof AuthenticatedPanelVentasRoute
+  '/categorias': typeof AuthenticatedPanelGerenteCategoriasRoute
+  '/clientes': typeof AuthenticatedPanelGerenteClientesRoute
+  '/dashboard': typeof AuthenticatedPanelGerenteDashboardRoute
+  '/reportes': typeof AuthenticatedPanelGerenteReportesRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/auth': typeof AuthRoute
+  '/reset-password': typeof ResetPasswordRoute
+  '/sin-acceso': typeof AuthenticatedSinAccesoRoute
+  '/productos': typeof AuthenticatedPanelProductosRoute
+  '/ventas': typeof AuthenticatedPanelVentasRoute
+  '/categorias': typeof AuthenticatedPanelGerenteCategoriasRoute
+  '/clientes': typeof AuthenticatedPanelGerenteClientesRoute
+  '/dashboard': typeof AuthenticatedPanelGerenteDashboardRoute
+  '/reportes': typeof AuthenticatedPanelGerenteReportesRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
+  '/auth': typeof AuthRoute
+  '/reset-password': typeof ResetPasswordRoute
+  '/_authenticated/_panel': typeof AuthenticatedPanelRouteRouteWithChildren
+  '/_authenticated/sin-acceso': typeof AuthenticatedSinAccesoRoute
+  '/_authenticated/_panel/_gerente': typeof AuthenticatedPanelGerenteRouteRouteWithChildren
+  '/_authenticated/_panel/productos': typeof AuthenticatedPanelProductosRoute
+  '/_authenticated/_panel/ventas': typeof AuthenticatedPanelVentasRoute
+  '/_authenticated/_panel/_gerente/categorias': typeof AuthenticatedPanelGerenteCategoriasRoute
+  '/_authenticated/_panel/_gerente/clientes': typeof AuthenticatedPanelGerenteClientesRoute
+  '/_authenticated/_panel/_gerente/dashboard': typeof AuthenticatedPanelGerenteDashboardRoute
+  '/_authenticated/_panel/_gerente/reportes': typeof AuthenticatedPanelGerenteReportesRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths:
+    | '/'
+    | '/auth'
+    | '/reset-password'
+    | '/sin-acceso'
+    | '/productos'
+    | '/ventas'
+    | '/categorias'
+    | '/clientes'
+    | '/dashboard'
+    | '/reportes'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to:
+    | '/'
+    | '/auth'
+    | '/reset-password'
+    | '/sin-acceso'
+    | '/productos'
+    | '/ventas'
+    | '/categorias'
+    | '/clientes'
+    | '/dashboard'
+    | '/reportes'
+  id:
+    | '__root__'
+    | '/'
+    | '/_authenticated'
+    | '/auth'
+    | '/reset-password'
+    | '/_authenticated/_panel'
+    | '/_authenticated/sin-acceso'
+    | '/_authenticated/_panel/_gerente'
+    | '/_authenticated/_panel/productos'
+    | '/_authenticated/_panel/ventas'
+    | '/_authenticated/_panel/_gerente/categorias'
+    | '/_authenticated/_panel/_gerente/clientes'
+    | '/_authenticated/_panel/_gerente/dashboard'
+    | '/_authenticated/_panel/_gerente/reportes'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
+  AuthRoute: typeof AuthRoute
+  ResetPasswordRoute: typeof ResetPasswordRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -48,11 +191,154 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_authenticated': {
+      id: '/_authenticated'
+      path: ''
+      fullPath: '/'
+      preLoaderRoute: typeof AuthenticatedRouteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/auth': {
+      id: '/auth'
+      path: '/auth'
+      fullPath: '/auth'
+      preLoaderRoute: typeof AuthRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/reset-password': {
+      id: '/reset-password'
+      path: '/reset-password'
+      fullPath: '/reset-password'
+      preLoaderRoute: typeof ResetPasswordRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_authenticated/_panel': {
+      id: '/_authenticated/_panel'
+      path: ''
+      fullPath: '/'
+      preLoaderRoute: typeof AuthenticatedPanelRouteRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/sin-acceso': {
+      id: '/_authenticated/sin-acceso'
+      path: '/sin-acceso'
+      fullPath: '/sin-acceso'
+      preLoaderRoute: typeof AuthenticatedSinAccesoRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/_panel/_gerente': {
+      id: '/_authenticated/_panel/_gerente'
+      path: ''
+      fullPath: '/'
+      preLoaderRoute: typeof AuthenticatedPanelGerenteRouteRouteImport
+      parentRoute: typeof AuthenticatedPanelRouteRoute
+    }
+    '/_authenticated/_panel/productos': {
+      id: '/_authenticated/_panel/productos'
+      path: '/productos'
+      fullPath: '/productos'
+      preLoaderRoute: typeof AuthenticatedPanelProductosRouteImport
+      parentRoute: typeof AuthenticatedPanelRouteRoute
+    }
+    '/_authenticated/_panel/ventas': {
+      id: '/_authenticated/_panel/ventas'
+      path: '/ventas'
+      fullPath: '/ventas'
+      preLoaderRoute: typeof AuthenticatedPanelVentasRouteImport
+      parentRoute: typeof AuthenticatedPanelRouteRoute
+    }
+    '/_authenticated/_panel/_gerente/categorias': {
+      id: '/_authenticated/_panel/_gerente/categorias'
+      path: '/categorias'
+      fullPath: '/categorias'
+      preLoaderRoute: typeof AuthenticatedPanelGerenteCategoriasRouteImport
+      parentRoute: typeof AuthenticatedPanelGerenteRouteRoute
+    }
+    '/_authenticated/_panel/_gerente/clientes': {
+      id: '/_authenticated/_panel/_gerente/clientes'
+      path: '/clientes'
+      fullPath: '/clientes'
+      preLoaderRoute: typeof AuthenticatedPanelGerenteClientesRouteImport
+      parentRoute: typeof AuthenticatedPanelGerenteRouteRoute
+    }
+    '/_authenticated/_panel/_gerente/dashboard': {
+      id: '/_authenticated/_panel/_gerente/dashboard'
+      path: '/dashboard'
+      fullPath: '/dashboard'
+      preLoaderRoute: typeof AuthenticatedPanelGerenteDashboardRouteImport
+      parentRoute: typeof AuthenticatedPanelGerenteRouteRoute
+    }
+    '/_authenticated/_panel/_gerente/reportes': {
+      id: '/_authenticated/_panel/_gerente/reportes'
+      path: '/reportes'
+      fullPath: '/reportes'
+      preLoaderRoute: typeof AuthenticatedPanelGerenteReportesRouteImport
+      parentRoute: typeof AuthenticatedPanelGerenteRouteRoute
+    }
   }
 }
 
+interface AuthenticatedPanelGerenteRouteRouteChildren {
+  AuthenticatedPanelGerenteCategoriasRoute: typeof AuthenticatedPanelGerenteCategoriasRoute
+  AuthenticatedPanelGerenteClientesRoute: typeof AuthenticatedPanelGerenteClientesRoute
+  AuthenticatedPanelGerenteDashboardRoute: typeof AuthenticatedPanelGerenteDashboardRoute
+  AuthenticatedPanelGerenteReportesRoute: typeof AuthenticatedPanelGerenteReportesRoute
+}
+
+const AuthenticatedPanelGerenteRouteRouteChildren: AuthenticatedPanelGerenteRouteRouteChildren =
+  {
+    AuthenticatedPanelGerenteCategoriasRoute:
+      AuthenticatedPanelGerenteCategoriasRoute,
+    AuthenticatedPanelGerenteClientesRoute:
+      AuthenticatedPanelGerenteClientesRoute,
+    AuthenticatedPanelGerenteDashboardRoute:
+      AuthenticatedPanelGerenteDashboardRoute,
+    AuthenticatedPanelGerenteReportesRoute:
+      AuthenticatedPanelGerenteReportesRoute,
+  }
+
+const AuthenticatedPanelGerenteRouteRouteWithChildren =
+  AuthenticatedPanelGerenteRouteRoute._addFileChildren(
+    AuthenticatedPanelGerenteRouteRouteChildren,
+  )
+
+interface AuthenticatedPanelRouteRouteChildren {
+  AuthenticatedPanelGerenteRouteRoute: typeof AuthenticatedPanelGerenteRouteRouteWithChildren
+  AuthenticatedPanelProductosRoute: typeof AuthenticatedPanelProductosRoute
+  AuthenticatedPanelVentasRoute: typeof AuthenticatedPanelVentasRoute
+}
+
+const AuthenticatedPanelRouteRouteChildren: AuthenticatedPanelRouteRouteChildren =
+  {
+    AuthenticatedPanelGerenteRouteRoute:
+      AuthenticatedPanelGerenteRouteRouteWithChildren,
+    AuthenticatedPanelProductosRoute: AuthenticatedPanelProductosRoute,
+    AuthenticatedPanelVentasRoute: AuthenticatedPanelVentasRoute,
+  }
+
+const AuthenticatedPanelRouteRouteWithChildren =
+  AuthenticatedPanelRouteRoute._addFileChildren(
+    AuthenticatedPanelRouteRouteChildren,
+  )
+
+interface AuthenticatedRouteRouteChildren {
+  AuthenticatedPanelRouteRoute: typeof AuthenticatedPanelRouteRouteWithChildren
+  AuthenticatedSinAccesoRoute: typeof AuthenticatedSinAccesoRoute
+}
+
+const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
+  AuthenticatedPanelRouteRoute: AuthenticatedPanelRouteRouteWithChildren,
+  AuthenticatedSinAccesoRoute: AuthenticatedSinAccesoRoute,
+}
+
+const AuthenticatedRouteRouteWithChildren =
+  AuthenticatedRouteRoute._addFileChildren(AuthenticatedRouteRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
+  AuthRoute: AuthRoute,
+  ResetPasswordRoute: ResetPasswordRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
