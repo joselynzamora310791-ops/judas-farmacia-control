@@ -90,7 +90,10 @@ function NuevaVenta() {
 
   const agregar = (p: Producto) => {
     const dias = diasParaVencer(p, hoy);
-    if (dias !== null && dias < 0) return toast.error("Este producto está vencido y no puede venderse");
+    if (dias !== null && dias < 0) {
+      toast.error("Este producto está vencido y no puede venderse");
+      return;
+    }
     setCarrito((c) => {
       const existente = c.find((i) => i.producto.id === p.id);
       const enCarrito = existente?.cantidad ?? 0;
