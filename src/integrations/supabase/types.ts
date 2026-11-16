@@ -14,16 +14,285 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      categorias: {
+        Row: {
+          created_at: string
+          descripcion: string | null
+          id: string
+          nombre: string
+        }
+        Insert: {
+          created_at?: string
+          descripcion?: string | null
+          id?: string
+          nombre: string
+        }
+        Update: {
+          created_at?: string
+          descripcion?: string | null
+          id?: string
+          nombre?: string
+        }
+        Relationships: []
+      }
+      clientes: {
+        Row: {
+          cedula: string | null
+          created_at: string
+          direccion: string | null
+          email: string | null
+          id: string
+          nombre: string
+          telefono: string | null
+        }
+        Insert: {
+          cedula?: string | null
+          created_at?: string
+          direccion?: string | null
+          email?: string | null
+          id?: string
+          nombre: string
+          telefono?: string | null
+        }
+        Update: {
+          cedula?: string | null
+          created_at?: string
+          direccion?: string | null
+          email?: string | null
+          id?: string
+          nombre?: string
+          telefono?: string | null
+        }
+        Relationships: []
+      }
+      productos: {
+        Row: {
+          categoria_id: string | null
+          codigo: string
+          created_at: string
+          existencia: number
+          fecha_vencimiento: string | null
+          id: string
+          nombre: string
+          precio: number
+          stock_minimo: number
+          updated_at: string
+        }
+        Insert: {
+          categoria_id?: string | null
+          codigo: string
+          created_at?: string
+          existencia?: number
+          fecha_vencimiento?: string | null
+          id?: string
+          nombre: string
+          precio?: number
+          stock_minimo?: number
+          updated_at?: string
+        }
+        Update: {
+          categoria_id?: string | null
+          codigo?: string
+          created_at?: string
+          existencia?: number
+          fecha_vencimiento?: string | null
+          id?: string
+          nombre?: string
+          precio?: number
+          stock_minimo?: number
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "productos_categoria_id_fkey"
+            columns: ["categoria_id"]
+            isOneToOne: false
+            referencedRelation: "categorias"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      profiles: {
+        Row: {
+          created_at: string
+          email: string | null
+          id: string
+          nombre: string
+        }
+        Insert: {
+          created_at?: string
+          email?: string | null
+          id: string
+          nombre?: string
+        }
+        Update: {
+          created_at?: string
+          email?: string | null
+          id?: string
+          nombre?: string
+        }
+        Relationships: []
+      }
+      user_roles: {
+        Row: {
+          created_at: string
+          id: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
+        }
+        Relationships: []
+      }
+      venta_detalles: {
+        Row: {
+          cantidad: number
+          id: string
+          precio_unitario: number
+          producto_id: string | null
+          producto_nombre: string
+          subtotal: number
+          venta_id: string
+        }
+        Insert: {
+          cantidad: number
+          id?: string
+          precio_unitario: number
+          producto_id?: string | null
+          producto_nombre: string
+          subtotal: number
+          venta_id: string
+        }
+        Update: {
+          cantidad?: number
+          id?: string
+          precio_unitario?: number
+          producto_id?: string | null
+          producto_nombre?: string
+          subtotal?: number
+          venta_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "venta_detalles_producto_id_fkey"
+            columns: ["producto_id"]
+            isOneToOne: false
+            referencedRelation: "productos"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "venta_detalles_venta_id_fkey"
+            columns: ["venta_id"]
+            isOneToOne: false
+            referencedRelation: "ventas"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      ventas: {
+        Row: {
+          cliente_id: string | null
+          created_at: string
+          id: string
+          metodo_pago: string
+          numero: number
+          total: number
+          usuario_id: string | null
+        }
+        Insert: {
+          cliente_id?: string | null
+          created_at?: string
+          id?: string
+          metodo_pago?: string
+          numero?: never
+          total?: number
+          usuario_id?: string | null
+        }
+        Update: {
+          cliente_id?: string | null
+          created_at?: string
+          id?: string
+          metodo_pago?: string
+          numero?: never
+          total?: number
+          usuario_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ventas_cliente_id_fkey"
+            columns: ["cliente_id"]
+            isOneToOne: false
+            referencedRelation: "clientes"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ventas_usuario_id_fkey"
+            columns: ["usuario_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      dashboard_resumen: { Args: never; Returns: Json }
+      existe_gerente: { Args: never; Returns: boolean }
+      has_role: {
+        Args: {
+          _role: Database["public"]["Enums"]["app_role"]
+          _user_id: string
+        }
+        Returns: boolean
+      }
+      registrar_venta: {
+        Args: { _cliente_id: string; _items: Json; _metodo_pago: string }
+        Returns: string
+      }
+      reporte_categorias: {
+        Args: { _desde: string; _hasta: string }
+        Returns: {
+          cantidad: number
+          categoria: string
+          ingresos: number
+        }[]
+      }
+      reporte_productos: {
+        Args: { _desde: string; _hasta: string }
+        Returns: {
+          cantidad: number
+          categoria: string
+          codigo: string
+          ingresos: number
+          nombre: string
+          producto_id: string
+        }[]
+      }
+      reporte_ventas_diarias: {
+        Args: { _desde: string; _hasta: string }
+        Returns: {
+          dia: string
+          num_ventas: number
+          total: number
+        }[]
+      }
+      tiene_acceso: { Args: { _user_id: string }; Returns: boolean }
     }
     Enums: {
-      [_ in never]: never
+      app_role: "gerente" | "cajero"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -150,6 +419,8 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      app_role: ["gerente", "cajero"],
+    },
   },
 } as const
