@@ -28,3 +28,9 @@ use the editor.
   own key and store it in Secrets.
 - **Secrets.** Lovable manages them. Do not put secret values in the repo.
 <!-- LOVABLE:END -->
+
+## Project rules
+- Role checks live in `src/lib/permisos.ts` (UI) and are enforced again by database policies; never rely on UI hiding alone.
+- Gerente-only pages live under `src/routes/_authenticated/_panel/_gerente/`, whose layout redirects other roles.
+- Sales are written only through the `registrar_venta` database function so prices come from inventory, not the client.
+- Staff accounts are created by the gerente via a server function using the admin client after a `has_role` check; public sign-up only creates the first gerente.
