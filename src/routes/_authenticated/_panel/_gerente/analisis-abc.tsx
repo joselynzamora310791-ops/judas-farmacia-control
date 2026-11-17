@@ -41,7 +41,7 @@ export const Route = createFileRoute("/_authenticated/_panel/_gerente/analisis-a
 const DESCRIPCION: Record<ClaseABC, { titulo: string; texto: string; tarjeta: string; acento: string }> = {
   A: {
     titulo: "Clase A · Alta prioridad",
-    texto: "Generan cerca del 80% de los ingresos. Nunca deben agotarse: control diario y reabastecimiento prioritario.",
+    texto: "Representan cerca del 80% del valor de consumo. Nunca deben agotarse: control diario y reabastecimiento prioritario.",
     tarjeta: "border-primary/30 bg-primary-soft",
     acento: "text-primary",
   },
@@ -53,7 +53,7 @@ const DESCRIPCION: Record<ClaseABC, { titulo: string; texto: string; tarjeta: st
   },
   C: {
     titulo: "Clase C · Baja prioridad",
-    texto: "Último 5% de los ingresos. Comprar en cantidades pequeñas y evitar sobrestock o vencimientos.",
+    texto: "Último 5% del valor de consumo. Comprar en cantidades pequeñas y evitar sobrestock o vencimientos.",
     tarjeta: "border-border bg-muted",
     acento: "text-muted-foreground",
   },
@@ -81,7 +81,7 @@ function AnalisisABC() {
 
   const exportar = () =>
     descargarCSV(`analisis_abc_${rango.desde}_a_${rango.hasta}.csv`, [
-      ["Posición", "Código", "Producto", "Categoría", "Unidades", "Ingresos (C$)", "% ingresos", "% acumulado", "Clase"],
+      ["Posición", "Código", "Producto", "Categoría", "Unidades", "Valor de consumo (C$)", "% del valor", "% acumulado", "Clase"],
       ...filas.map((f, i) => [i + 1, f.codigo, f.nombre, f.categoria, f.cantidad, f.ingresos.toFixed(2), f.porcentaje.toFixed(2), f.acumulado.toFixed(2), f.clase]),
     ]);
 
@@ -101,8 +101,8 @@ function AnalisisABC() {
       <div className="flex items-start gap-3 rounded-2xl border bg-card p-4 text-sm shadow-card">
         <Info className="mt-0.5 size-4 shrink-0 text-primary" />
         <p className="text-muted-foreground">
-          Los productos se ordenan de mayor a menor ingreso en el período. Se clasifican como <b className="text-foreground">A</b> hasta
-          acumular el {LIMITE_A}% de los ingresos, <b className="text-foreground">B</b> hasta el {LIMITE_B}% y{" "}
+          Cada producto se mide por su contribución al <b className="text-foreground">valor de consumo</b> del período (unidades vendidas × precio de venta) y se ordenan de mayor a menor. Se clasifican como <b className="text-foreground">A</b> hasta
+          acumular el {LIMITE_A}% del valor de consumo, <b className="text-foreground">B</b> hasta el {LIMITE_B}% y{" "}
           <b className="text-foreground">C</b> el resto (principio de Pareto).
           {sinVentas > 0 &&
             (sinVentas === 1
@@ -127,7 +127,7 @@ function AnalisisABC() {
               </div>
               <div className="tabular mt-3 font-display text-2xl font-bold">{formatCordobas(r.ingresos)}</div>
               <div className="mt-1 text-xs text-muted-foreground">
-                {formatEntero(r.productos)} productos ({formatPorcentaje(r.pctProductos)}) · {formatPorcentaje(r.pctIngresos)} de ingresos
+                {formatEntero(r.productos)} productos ({formatPorcentaje(r.pctProductos)}) · {formatPorcentaje(r.pctIngresos)} del valor de consumo
               </div>
               <p className="mt-3 text-xs leading-relaxed text-muted-foreground">{d.texto}</p>
             </button>
@@ -149,7 +149,7 @@ function AnalisisABC() {
                 <Tooltip
                   contentStyle={tooltipStyle}
                   labelFormatter={(_, p) => (p?.[0]?.payload as { nombre?: string } | undefined)?.nombre ?? ""}
-                  formatter={(v, n) => (n === "acumulado" ? [`${v}%`, "Acumulado"] : [formatCordobas(Number(v)), "Ingresos"])}
+                  formatter={(v, n) => (n === "acumulado" ? [`${v}%`, "Acumulado"] : [formatCordobas(Number(v)), "Valor de consumo"])}
                 />
                 <ReferenceLine yAxisId="der" y={LIMITE_A} stroke="var(--primary)" strokeDasharray="4 4" />
                 <ReferenceLine yAxisId="der" y={LIMITE_B} stroke="var(--success)" strokeDasharray="4 4" />
@@ -177,8 +177,8 @@ function AnalisisABC() {
                   <th className="px-5 py-3 font-semibold">Producto</th>
                   <th className="px-5 py-3 font-semibold">Categoría</th>
                   <th className="px-5 py-3 text-right font-semibold">Unidades</th>
-                  <th className="px-5 py-3 text-right font-semibold">Ingresos</th>
-                  <th className="px-5 py-3 text-right font-semibold">% ingresos</th>
+                  <th className="px-5 py-3 text-right font-semibold">Valor de consumo</th>
+                  <th className="px-5 py-3 text-right font-semibold">% del valor</th>
                   <th className="px-5 py-3 text-right font-semibold">% acumulado</th>
                   <th className="px-5 py-3 text-center font-semibold">Clase</th>
                 </tr>
