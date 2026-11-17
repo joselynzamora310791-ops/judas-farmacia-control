@@ -23,6 +23,10 @@ export function puedeEditarProductos(rol: Rol | null | undefined): boolean {
   return rol === "gerente";
 }
 
+export function puedeEliminarUsuario(rol: Rol | null | undefined, usuarioActivoId: string, usuarioId: string): boolean {
+  return rol === "gerente" && usuarioActivoId !== usuarioId;
+}
+
 export function rutaInicio(rol: Rol | null | undefined): "/dashboard" | "/ventas" | "/sin-acceso" {
   if (rol === "gerente") return "/dashboard";
   if (rol === "cajero") return "/ventas";

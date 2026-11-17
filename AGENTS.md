@@ -34,3 +34,4 @@ use the editor.
 - Gerente-only pages live under `src/routes/_authenticated/_panel/_gerente/`, whose layout redirects other roles.
 - Sales are written only through the `registrar_venta` database function so prices come from inventory, not the client.
 - Staff accounts are created by the gerente via a server function using the admin client after a `has_role` check; public sign-up only creates the first gerente.
+- Staff account edits and deletions use authenticated server functions with a fresh gerente check; edits preserve roles and deletes reject the caller's own ID so browser controls cannot bypass account protections.

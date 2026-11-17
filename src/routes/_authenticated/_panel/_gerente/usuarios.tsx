@@ -2,7 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useMutation, useQueryClient, useSuspenseQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { useState } from "react";
-import { ShieldCheck, UserCog, UserPlus, Users } from "lucide-react";
+import { Pencil, ShieldCheck, Trash2, UserCog, UserPlus, Users } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { PageHeader, StatCard, Vacio } from "@/components/app/PageHeader";
@@ -12,10 +12,11 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { mensajeError, usuariosQuery } from "@/lib/queries";
+import { AlertDialog, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
+import { mensajeError, usuariosQuery, type UsuarioSistema } from "@/lib/queries";
 import { formatFecha } from "@/lib/format";
-import { NOMBRE_ROL, type Rol } from "@/lib/permisos";
-import { crearUsuario } from "@/lib/usuarios.functions";
+import { NOMBRE_ROL, puedeEliminarUsuario, type Rol } from "@/lib/permisos";
+import { crearUsuario, editarUsuario, eliminarUsuario } from "@/lib/usuarios.functions";
 
 export const Route = createFileRoute("/_authenticated/_panel/_gerente/usuarios")({
   head: () => ({
@@ -48,7 +49,20 @@ function UsuariosPage() {
   const { perfil } = Route.useRouteContext();
   const { data: usuarios } = useSuspenseQuery(usuariosQuery());
   const [creando, setCreando] = useState(false);
+  const [editando, setEditando] = useState<UsuarioSistema | null>(null);
+  const [eliminando, setEliminando] = useState<UsuarioSistema | null>(null);
+  const eliminar = useServerFn(eliminarUsuario);
   const queryClient = useQueryClient();
+
+  const borrar = useMutation({
+    mutationFn: (id: string) => eliminar({ data: { id } }),
+    onSuccess: () => {
+      toast.success("Usuario eliminado");
+      queryClient.invalidateQueries({ queryKey: ["usuarios"] });
+      setEliminando(null);
+    },
+    onError: (e) => toast.error(mensajeError(e)),
+  });
 
   const cambiarRol = useMutation({
     mutationFn: async ({ userId, rol }: { userId: string; rol: Rol | "ninguno" }) => {
@@ -93,6 +107,7 @@ function UsuariosPage() {
                 <th className="px-4 py-3 font-semibold">Rol actual</th>
                 <th className="px-4 py-3 font-semibold">Registrado</th>
                 <th className="px-4 py-3 font-semibold">Cambiar rol</th>
+                <th className="px-4 py-3 font-semibold">Acciones</th>
               </tr>
             </thead>
             <tbody className="divide-y">
@@ -121,6 +136,18 @@ function UsuariosPage() {
                           <SelectItem value="ninguno">Sin acceso</SelectItem>
                         </SelectContent>
                       </Select>
+                    </td>
+                    <td className="px-4 py-3">
+                      <div className="flex items-center gap-2">
+                        <Button variant="outline" size="sm" onClick={() => setEditando(u)} disabled={borrar.isPending || cambiarRol.isPending}>
+                          <Pencil className="size-4" /> Editar
+                        </Button>
+                        <Button variant="outline" size="sm" className="text-destructive" disabled={!puedeEliminarUsuario(perfil.rol, perfil.id, u.id) || borrar.isPending || cambiarRol.isPending}
+                          title={esYo ? "No puede eliminar su propia cuenta durante una sesión activa" : `Eliminar a ${u.nombre || u.email}`}
+                          onClick={() => setEliminando(u)}>
+                          <Trash2 className="size-4" /> Eliminar
+                        </Button>
+                      </div>
                     </td>
                   </tr>
                 );
@@ -159,7 +186,76 @@ function UsuariosPage() {
       </div>
 
       {creando && <NuevoUsuarioDialog onClose={() => setCreando(false)} />}
+      {editando && <EditarUsuarioDialog usuario={editando} onClose={() => setEditando(null)} />}
+      <AlertDialog open={!!eliminando} onOpenChange={(open) => { if (!open && !borrar.isPending) setEliminando(null); }}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>¿Eliminar usuario?</AlertDialogTitle>
+            <AlertDialogDescription>
+              Se eliminará la cuenta de {eliminando?.nombre || eliminando?.email}. Ya no podrá iniciar sesión.
+              Esta acción no se puede deshacer. Las ventas registradas se conservarán.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <Button variant="outline" disabled={borrar.isPending} onClick={() => setEliminando(null)}>Cancelar</Button>
+            <Button variant="destructive" disabled={borrar.isPending} onClick={() => { if (eliminando) borrar.mutate(eliminando.id); }}>
+              <Trash2 className="size-4" /> {borrar.isPending ? "Eliminando…" : "Eliminar usuario"}
+            </Button>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
+  );
+}
+
+function EditarUsuarioDialog({ usuario, onClose }: { usuario: UsuarioSistema; onClose: () => void }) {
+  const queryClient = useQueryClient();
+  const editar = useServerFn(editarUsuario);
+  const [f, setF] = useState({ nombre: usuario.nombre, email: usuario.email ?? "", password: "" });
+  const guardar = useMutation({
+    mutationFn: () => editar({ data: { id: usuario.id, ...f } }),
+    onSuccess: () => {
+      toast.success("Usuario actualizado");
+      queryClient.invalidateQueries({ queryKey: ["usuarios"] });
+      queryClient.invalidateQueries({ queryKey: ["perfil", usuario.id] });
+      onClose();
+    },
+    onError: (e) => {
+      const msg = mensajeError(e);
+      try {
+        const lista = JSON.parse(msg) as { message: string }[];
+        toast.error(lista[0]?.message ?? msg);
+      } catch { toast.error(msg); }
+    },
+  });
+  return (
+    <Dialog open onOpenChange={(open) => { if (!open && !guardar.isPending) onClose(); }}>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>Editar usuario</DialogTitle>
+          <DialogDescription>El rol y los permisos actuales se conservarán.</DialogDescription>
+        </DialogHeader>
+        <form className="space-y-4" onSubmit={(e) => { e.preventDefault(); guardar.mutate(); }}>
+          <div className="space-y-1.5">
+            <Label htmlFor="editar-nombre">Nombre completo</Label>
+            <Input id="editar-nombre" required minLength={2} maxLength={100} value={f.nombre} disabled={guardar.isPending} onChange={(e) => setF({ ...f, nombre: e.target.value })} />
+          </div>
+          <div className="space-y-1.5">
+            <Label htmlFor="editar-correo">Correo electrónico</Label>
+            <Input id="editar-correo" type="email" required maxLength={255} value={f.email} disabled={guardar.isPending} onChange={(e) => setF({ ...f, email: e.target.value })} />
+          </div>
+          <div className="space-y-1.5">
+            <Label htmlFor="editar-password">Nueva contraseña (opcional)</Label>
+            <Input id="editar-password" type="password" autoComplete="new-password" minLength={6} maxLength={72} value={f.password} disabled={guardar.isPending} onChange={(e) => setF({ ...f, password: e.target.value })} />
+            <p className="text-xs text-muted-foreground">Deje este campo vacío para conservar la contraseña actual.</p>
+          </div>
+          <DialogFooter>
+            <Button type="button" variant="outline" disabled={guardar.isPending} onClick={onClose}>Cancelar</Button>
+            <Button type="submit" disabled={guardar.isPending}>{guardar.isPending ? "Guardando…" : "Guardar cambios"}</Button>
+          </DialogFooter>
+        </form>
+      </DialogContent>
+    </Dialog>
   );
 }
 

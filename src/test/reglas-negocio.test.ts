@@ -1,10 +1,17 @@
 import { describe, expect, it } from "vitest";
-import { puedeAcceder, puedeEditarProductos, rutaInicio } from "@/lib/permisos";
+import { puedeAcceder, puedeEditarProductos, puedeEliminarUsuario, rutaInicio } from "@/lib/permisos";
 import { porVencer, tieneStockBajo } from "@/lib/inventario";
 import { clasificarABC } from "@/lib/abc";
 import { formatCordobas } from "@/lib/format";
 
 describe("Roles", () => {
+  it("el gerente no elimina su propia cuenta activa", () => {
+    expect(puedeEliminarUsuario("gerente", "gerente-activo", "gerente-activo")).toBe(false);
+    expect(puedeEliminarUsuario("gerente", "gerente-activo", "otro-usuario")).toBe(true);
+  });
+  it("el cajero no elimina usuarios", () => {
+    expect(puedeEliminarUsuario("cajero", "cajero", "otro-usuario")).toBe(false);
+  });
   it("el cajero no accede al dashboard", () => {
     expect(puedeAcceder("cajero", "dashboard")).toBe(false);
   });
