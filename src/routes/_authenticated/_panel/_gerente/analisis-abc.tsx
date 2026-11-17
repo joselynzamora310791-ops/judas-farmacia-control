@@ -21,9 +21,9 @@ export const Route = createFileRoute("/_authenticated/_panel/_gerente/analisis-a
   head: () => ({
     meta: [
       { title: "Análisis ABC · Farmacia San Judas SIG" },
-      { name: "description", content: "Clasificación ABC de productos según su aporte a los ingresos." },
+      { name: "description", content: "Clasificación ABC de productos según su contribución al valor de consumo." },
       { property: "og:title", content: "Análisis ABC · Farmacia San Judas SIG" },
-      { property: "og:description", content: "Clasificación ABC de productos según ingresos." },
+      { property: "og:description", content: "Clasificación ABC según el valor de consumo." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
     ],
