@@ -14,6 +14,6 @@ describe("Historial del examen", () => {
   it("consulta por producto", () => { expect(filtrarVentas(ventas, { ...filtros, producto: "p1" })).toHaveLength(15); });
   it("consulta por cajero", () => { expect(filtrarVentas(ventas, { ...filtros, cajero: "otro" })).toHaveLength(0); });
   it("separa ventas ordinarias de demostraciones", () => {
-    expect(filtrarVentas([...ventas, { ...ventas[0], demo_lote: null }], { ...filtros, soloDemo: true })).toHaveLength(30);
+    expect(filtrarVentas([...ventas, { created_at: "2026-11-18T16:00:00Z", total: 2, usuario_id: "cajero", venta_detalles: [{ producto_id: "p1" }], demo_lote: null }], { ...filtros, soloDemo: true })).toHaveLength(30);
   });
 });
