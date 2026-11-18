@@ -33,5 +33,6 @@ use the editor.
 - Role checks live in `src/lib/permisos.ts` (UI) and are enforced again by database policies; never rely on UI hiding alone.
 - Gerente-only pages live under `src/routes/_authenticated/_panel/_gerente/`, whose layout redirects other roles.
 - Sales are written only through the `registrar_venta` database function so prices come from inventory, not the client.
+- Historical exam sales use that same sales function in a single atomic, idempotent data operation, then mark a unique batch/ordinal and backdate only new rows; history filters run on paginated RLS-scoped sales with linked details.
 - Staff accounts are created by the gerente via a server function using the admin client after a `has_role` check; public sign-up only creates the first gerente.
 - Staff account edits and deletions use authenticated server functions with a fresh gerente check; edits preserve roles and deletes reject the caller's own ID so browser controls cannot bypass account protections.

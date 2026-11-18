@@ -24,6 +24,8 @@ import {
 import { formatCordobas, formatEntero, formatFechaHora, hoyManagua } from "@/lib/format";
 import { diasParaVencer, porVencer, tieneStockBajo } from "@/lib/inventario";
 import { cn } from "@/lib/utils";
+import { filtrarVentas, resumenDemo } from "@/lib/historial-ventas";
+import { Checkbox } from "@/components/ui/checkbox";
 
 export const Route = createFileRoute("/_authenticated/_panel/ventas")({
   head: () => ({
@@ -353,7 +355,7 @@ function ComprobanteDialog({ ventaId, onClose, venta }: { ventaId: string; onClo
     <Dialog open onOpenChange={(o) => !o && onClose()}>
       <DialogContent className="sm:max-w-md">
         <DialogHeader><DialogTitle>Comprobante de venta</DialogTitle></DialogHeader>
-        <div className="rounded-xl border p-4 text-sm">
+          <div className="rounded-xl border p-4 text-sm">
           <div className="text-center">
             <div className="font-display text-base font-bold">Farmacia San Judas</div>
             <div className="text-xs text-muted-foreground">Managua, Nicaragua</div>
@@ -364,14 +366,15 @@ function ComprobanteDialog({ ventaId, onClose, venta }: { ventaId: string; onClo
               <span className="text-right">{formatFechaHora(v.created_at)}</span>
               <span>Cliente: {v.clientes?.nombre ?? "Consumidor final"}</span>
               <span className="text-right">Pago: {METODOS[v.metodo_pago] ?? v.metodo_pago}</span>
-              <span className="col-span-2">Atendió: {v.profiles?.nombre ?? "—"}</span>
+               <span className="col-span-2">Atendió: {v.usuario_nombre ?? v.profiles?.nombre ?? "—"}</span>
+               {v.demo_lote && <span className="col-span-2 font-semibold text-warning">Demostración · Examen</span>}
             </div>
           )}
           <div className="my-3 border-t border-dashed" />
           <ul className="space-y-1.5">
             {(detalles ?? []).map((d) => (
               <li key={d.id} className="flex justify-between gap-3">
-                <span>{d.cantidad} × {d.producto_nombre}</span>
+                 <span>{d.cantidad} × {d.producto_nombre}<span className="block text-xs text-muted-foreground">{formatCordobas(d.precio_unitario)} c/u</span></span>
                 <span className="tabular">{formatCordobas(d.subtotal)}</span>
               </li>
             ))}
@@ -394,8 +397,33 @@ function ComprobanteDialog({ ventaId, onClose, venta }: { ventaId: string; onClo
 function Historial() {
   const { data: ventas } = useSuspenseQuery(ventasRecientesQuery());
   const [seleccion, setSeleccion] = useState<Venta | null>(null);
+  const [filtros, setFiltros] = useState({ desde: "", hasta: "", mes: "", producto: "", cajero: "", soloDemo: false });
+  const filtradas = filtrarVentas(ventas, filtros);
+  const resumen = resumenDemo(ventas);
+  const productos = [...new Map(ventas.flatMap((v) => v.venta_detalles.filter((d) => d.producto_id).map((d) => [d.producto_id, d.producto_nombre] as const))).entries()];
+  const cajeros = [...new Map(ventas.filter((v) => v.usuario_id).map((v) => [v.usuario_id, v.usuario_nombre ?? v.profiles?.nombre ?? "—"] as const)).entries()];
   return (
-    <Panel titulo="Ventas recientes" acciones={<span className="text-xs text-muted-foreground">Últimas {ventas.length}</span>}>
+    <div className="space-y-6">
+      {resumen.length > 0 && <section className="space-y-3">
+        <h2 className="text-lg font-semibold">Demostración del examen</h2>
+        <div className="overflow-x-auto rounded-lg border">
+          <table className="w-full text-sm">
+            <thead className="bg-muted/60"><tr><th className="p-3 text-left">Mes</th><th className="p-3 text-right">Transacciones</th><th className="p-3 text-right">Total vendido</th></tr></thead>
+            <tbody className="divide-y">{resumen.map((r) => <tr key={r.mes}><td className="p-3">{new Intl.DateTimeFormat("es-NI", { month: "long", year: "numeric", timeZone: "America/Managua" }).format(new Date(`${r.mes}-15T12:00:00Z`))}</td><td className="p-3 text-right">{r.cantidad}</td><td className="p-3 text-right">{formatCordobas(r.total)}</td></tr>)}</tbody>
+            <tfoot className="border-t font-semibold"><tr><td className="p-3">Total demostración</td><td className="p-3 text-right">{resumen.reduce((s, r) => s + r.cantidad, 0)}</td><td className="p-3 text-right">{formatCordobas(resumen.reduce((s, r) => s + r.total, 0))}</td></tr></tfoot>
+          </table>
+        </div>
+      </section>}
+      <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="space-y-1"><Label htmlFor="ventas-desde">Desde</Label><Input id="ventas-desde" type="date" value={filtros.desde} onChange={(e) => setFiltros({ ...filtros, desde: e.target.value })} /></div>
+        <div className="space-y-1"><Label htmlFor="ventas-hasta">Hasta</Label><Input id="ventas-hasta" type="date" value={filtros.hasta} onChange={(e) => setFiltros({ ...filtros, hasta: e.target.value })} /></div>
+        <div className="space-y-1"><Label htmlFor="ventas-mes">Mes</Label><Input id="ventas-mes" type="month" value={filtros.mes} onChange={(e) => setFiltros({ ...filtros, mes: e.target.value })} /></div>
+        <div className="space-y-1"><Label>Producto</Label><Select value={filtros.producto || "todos"} onValueChange={(v) => setFiltros({ ...filtros, producto: v === "todos" ? "" : v })}><SelectTrigger aria-label="Filtrar por producto"><SelectValue /></SelectTrigger><SelectContent><SelectItem value="todos">Todos los productos</SelectItem>{productos.map(([id, nombre]) => id && <SelectItem key={id} value={id}>{nombre}</SelectItem>)}</SelectContent></Select></div>
+        <div className="space-y-1"><Label>Cajero</Label><Select value={filtros.cajero || "todos"} onValueChange={(v) => setFiltros({ ...filtros, cajero: v === "todos" ? "" : v })}><SelectTrigger aria-label="Filtrar por cajero"><SelectValue /></SelectTrigger><SelectContent><SelectItem value="todos">Todos los cajeros</SelectItem>{cajeros.map(([id, nombre]) => id && <SelectItem key={id} value={id}>{nombre}</SelectItem>)}</SelectContent></Select></div>
+        <div className="flex items-center gap-2 self-end py-2"><Checkbox id="ventas-demo" checked={filtros.soloDemo} onCheckedChange={(v) => setFiltros({ ...filtros, soloDemo: v === true })} /><Label htmlFor="ventas-demo">Solo demostración</Label></div>
+      </div>
+      <div className="flex flex-wrap items-center justify-between gap-2 text-sm"><span>{filtradas.length} transacciones · {formatCordobas(filtradas.reduce((s, v) => s + Number(v.total), 0))}</span><Button variant="outline" size="sm" onClick={() => setFiltros({ desde: "", hasta: "", mes: "", producto: "", cajero: "", soloDemo: false })}>Limpiar filtros</Button></div>
+    <Panel titulo="Historial de ventas" acciones={<span className="text-xs text-muted-foreground">{filtradas.length} registros</span>}>
       <div className="-mx-5 -my-5 overflow-x-auto">
         <table className="w-full text-sm">
           <thead className="bg-muted/60 text-left text-xs uppercase tracking-wide text-muted-foreground">
@@ -409,21 +437,22 @@ function Historial() {
             </tr>
           </thead>
           <tbody className="divide-y">
-            {ventas.map((v) => (
+            {filtradas.map((v) => (
               <tr key={v.id} className="cursor-pointer hover:bg-muted/40" onClick={() => setSeleccion(v)}>
-                <td className="px-5 py-3 font-mono text-xs">#{String(v.numero).padStart(6, "0")}</td>
+                <td className="px-5 py-3 font-mono text-xs"><Button variant="link" size="sm" onClick={() => setSeleccion(v)}>#{String(v.numero).padStart(6, "0")}</Button>{v.demo_lote && <span className="block font-sans text-xs font-semibold text-warning">Demostración · Examen</span>}</td>
                 <td className="px-5 py-3 text-muted-foreground">{formatFechaHora(v.created_at)}</td>
                 <td className="px-5 py-3">{v.clientes?.nombre ?? "Consumidor final"}</td>
-                <td className="px-5 py-3 text-muted-foreground">{v.profiles?.nombre ?? "—"}</td>
+                <td className="px-5 py-3 text-muted-foreground">{v.usuario_nombre ?? v.profiles?.nombre ?? "—"}</td>
                 <td className="px-5 py-3">{METODOS[v.metodo_pago] ?? v.metodo_pago}</td>
                 <td className="tabular px-5 py-3 text-right font-semibold">{formatCordobas(v.total)}</td>
               </tr>
             ))}
           </tbody>
         </table>
-        {ventas.length === 0 && <Vacio texto="Todavía no hay ventas registradas." />}
+        {filtradas.length === 0 && <Vacio texto="No hay ventas para los filtros seleccionados." />}
       </div>
       {seleccion && <ComprobanteDialog ventaId={seleccion.id} venta={seleccion} onClose={() => setSeleccion(null)} />}
     </Panel>
+    </div>
   );
 }

@@ -15,6 +15,13 @@
       "when": 1794941148089,
       "tag": "0001_reportes_solo_gerente",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1795020513309,
+      "tag": "0002_identificar_ventas_examen",
+      "breakpoints": true
     }
   ]
 }

@@ -105,19 +105,21 @@ export type Venta = {
   created_at: string;
   clientes: { nombre: string } | null;
   profiles: { nombre: string } | null;
+  usuario_id: string | null;
+  usuario_nombre: string | null;
+  demo_lote: string | null;
+  venta_detalles: { producto_id: string | null; producto_nombre: string; cantidad: number; precio_unitario: number; subtotal: number }[];
 };
 
 export const ventasRecientesQuery = () =>
   queryOptions({
     queryKey: ["ventas", "recientes"],
     queryFn: async () => {
-      const { data, error } = await supabase
+      return traerTodo<Venta>((d, h) => supabase
         .from("ventas")
-        .select("id, numero, total, metodo_pago, created_at, clientes(nombre), profiles(nombre)")
-        .order("created_at", { ascending: false })
-        .limit(200);
-      if (error) throw error;
-      return (data ?? []) as unknown as Venta[];
+        .select("id, numero, total, metodo_pago, created_at, usuario_id, usuario_nombre, demo_lote, clientes(nombre), profiles(nombre), venta_detalles(producto_id, producto_nombre, cantidad, precio_unitario, subtotal)")
+        .order("created_at", { ascending: false }).order("numero", { ascending: false })
+        .range(d, h) as unknown as PromiseLike<{ data: Venta[] | null; error: unknown }>);
     },
   });
 

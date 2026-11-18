@@ -203,29 +203,38 @@ export type Database = {
         Row: {
           cliente_id: string | null
           created_at: string
+          demo_lote: string | null
+          demo_ordinal: number | null
           id: string
           metodo_pago: string
           numero: number
           total: number
           usuario_id: string | null
+          usuario_nombre: string | null
         }
         Insert: {
           cliente_id?: string | null
           created_at?: string
+          demo_lote?: string | null
+          demo_ordinal?: number | null
           id?: string
           metodo_pago?: string
           numero?: never
           total?: number
           usuario_id?: string | null
+          usuario_nombre?: string | null
         }
         Update: {
           cliente_id?: string | null
           created_at?: string
+          demo_lote?: string | null
+          demo_ordinal?: number | null
           id?: string
           metodo_pago?: string
           numero?: never
           total?: number
           usuario_id?: string | null
+          usuario_nombre?: string | null
         }
         Relationships: [
           {

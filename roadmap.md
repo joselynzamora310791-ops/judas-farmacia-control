@@ -1,5 +1,9 @@
 # Roadmap — Farmacia San Judas SIG
 
+- [x] Registrar exactamente 30 ventas de demostración, 10 por mes, sin duplicados y con inventario coherente
+- [x] Consultar historial por fecha, mes, producto y cajero; mostrar resumen mensual de demostración
+- [x] Verificar facturas, detalles, existencias y consultas en pantalla
+
 - [x] Diagnosticar acceso del cajero: cuenta confirmada, rol cajero y apertura de Ventas verificados; el intento de ingreso falla por credenciales incorrectas
 - [ ] Cajero establece una nueva contraseña mediante recuperación o edición por el gerente y verifica ingreso (requiere acción del usuario; no cambiar credenciales sin su autorización)
 
