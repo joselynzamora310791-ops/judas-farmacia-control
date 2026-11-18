@@ -30,6 +30,7 @@ use the editor.
 <!-- LOVABLE:END -->
 
 ## Project rules
+- Derive Dashboard KPIs in browser-safe pure helpers in `src/lib/indicadores.ts` using the existing dashboard query; this preserves the sales mutation's cache invalidation without additional data writes.
 - Role checks live in `src/lib/permisos.ts` (UI) and are enforced again by database policies; never rely on UI hiding alone.
 - Gerente-only pages live under `src/routes/_authenticated/_panel/_gerente/`, whose layout redirects other roles.
 - Sales are written only through the `registrar_venta` database function so prices come from inventory, not the client.

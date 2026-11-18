@@ -1,5 +1,8 @@
 # Roadmap — Farmacia San Judas SIG
 
+- [x] Agregar Ticket promedio al Dashboard del gerente con ventas del mes / transacciones del mes, sin cambiar datos
+- [x] Verificar C$ 240.50, cálculo con nuevas cifras y presentación en escritorio y teléfono; conservar actualización existente tras ventas
+
 - [x] Eliminar por solicitud las facturas anteriores 000001 y 000003 y sus cinco detalles, restituyendo seis unidades al inventario
 - [x] Verificar 30 ventas y 60 detalles conservados, 10 por mes y noviembre con 10 incluso sin filtrar demostración, en teléfono y escritorio
 

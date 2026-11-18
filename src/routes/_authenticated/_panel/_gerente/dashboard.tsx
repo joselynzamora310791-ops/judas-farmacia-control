@@ -1,12 +1,13 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useSuspenseQuery } from "@tanstack/react-query";
-import { AlertTriangle, CalendarClock, Coins, Package, TrendingUp, Users } from "lucide-react";
+import { AlertTriangle, CalendarClock, Coins, Package, Receipt, TrendingUp, Users } from "lucide-react";
 import { Area, AreaChart, Bar, BarChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 import { PageHeader, Panel, StatCard, Vacio } from "@/components/app/PageHeader";
 import { StockBajoBadge, VencimientoBadge } from "@/components/app/Badges";
 import { dashboardQuery, productosQuery, ventasDiariasQuery, ventasPorProductoQuery } from "@/lib/queries";
 import { formatCordobas, formatDiaCorto, formatEntero, hoyManagua, inicioDeMes, sumarDias } from "@/lib/format";
 import { diasParaVencer, porVencer, tieneStockBajo } from "@/lib/inventario";
+import { calcularTicketPromedio } from "@/lib/indicadores";
 
 export const Route = createFileRoute("/_authenticated/_panel/_gerente/dashboard")({
   head: () => ({
@@ -63,10 +64,11 @@ function Dashboard() {
     <div className="space-y-6">
       <PageHeader titulo="Dashboard" descripcion="Resumen gerencial de ventas e inventario en tiempo real." />
 
-      <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+      <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-5">
         <StatCard titulo="Ventas de hoy" valor={formatCordobas(r.ventas_hoy)} detalle={`${formatEntero(r.num_ventas_hoy)} transacciones`} icon={Coins} tono="success" />
         <StatCard titulo="Ventas del mes" valor={formatCordobas(r.ventas_mes)} detalle={`${formatEntero(r.num_ventas_mes)} transacciones`} icon={TrendingUp} />
         <StatCard titulo="Stock bajo" valor={formatEntero(r.stock_bajo)} detalle="Productos en o bajo el mínimo" icon={AlertTriangle} tono="destructive" />
+        <StatCard titulo="Ticket promedio" valor={formatCordobas(calcularTicketPromedio(r.ventas_mes, r.num_ventas_mes))} detalle="Por transacción del mes" icon={Receipt} tono="success" />
         <StatCard titulo="Por vencer" valor={formatEntero(r.por_vencer)} detalle="Vencen en menos de 30 días" icon={CalendarClock} tono="warning" />
       </div>
 
