@@ -1,5 +1,8 @@
 # Roadmap — Farmacia San Judas SIG
 
+- [x] Eliminar por solicitud las facturas anteriores 000001 y 000003 y sus cinco detalles, restituyendo seis unidades al inventario
+- [x] Verificar 30 ventas y 60 detalles conservados, 10 por mes y noviembre con 10 incluso sin filtrar demostración, en teléfono y escritorio
+
 - [x] Cambiar el título a Demostración y mostrar por defecto las 30 ventas, separadas de las ventas ordinarias, sin modificar datos
 - [x] Verificar 10 ventas de demostración por mes y conservar acceso al historial completo
 
