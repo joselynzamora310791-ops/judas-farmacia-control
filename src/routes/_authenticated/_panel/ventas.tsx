@@ -367,7 +367,6 @@ function ComprobanteDialog({ ventaId, onClose, venta }: { ventaId: string; onClo
               <span>Cliente: {v.clientes?.nombre ?? "Consumidor final"}</span>
               <span className="text-right">Pago: {METODOS[v.metodo_pago] ?? v.metodo_pago}</span>
                <span className="col-span-2">Atendió: {v.usuario_nombre ?? v.profiles?.nombre ?? "—"}</span>
-               {v.demo_lote && <span className="col-span-2 font-semibold text-warning">Demostración · Examen</span>}
             </div>
           )}
           <div className="my-3 border-t border-dashed" />
@@ -439,7 +438,7 @@ function Historial() {
           <tbody className="divide-y">
             {filtradas.map((v) => (
               <tr key={v.id} className="cursor-pointer hover:bg-muted/40" onClick={() => setSeleccion(v)}>
-                <td className="px-5 py-3 font-mono text-xs"><Button variant="link" size="sm" onClick={() => setSeleccion(v)}>#{String(v.numero).padStart(6, "0")}</Button>{v.demo_lote && <span className="block font-sans text-xs font-semibold text-warning">Demostración · Examen</span>}</td>
+                <td className="px-5 py-3 font-mono text-xs"><Button variant="link" size="sm" onClick={() => setSeleccion(v)}>#{String(v.numero).padStart(6, "0")}</Button></td>
                 <td className="px-5 py-3 text-muted-foreground">{formatFechaHora(v.created_at)}</td>
                 <td className="px-5 py-3">{v.clientes?.nombre ?? "Consumidor final"}</td>
                 <td className="px-5 py-3 text-muted-foreground">{v.usuario_nombre ?? v.profiles?.nombre ?? "—"}</td>
