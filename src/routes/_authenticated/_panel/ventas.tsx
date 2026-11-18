@@ -24,7 +24,7 @@ import {
 import { formatCordobas, formatEntero, formatFechaHora, hoyManagua } from "@/lib/format";
 import { diasParaVencer, porVencer, tieneStockBajo } from "@/lib/inventario";
 import { cn } from "@/lib/utils";
-import { filtrarVentas, resumenDemo } from "@/lib/historial-ventas";
+import { filtrarVentas, filtrosInicialesHistorial, resumenDemo } from "@/lib/historial-ventas";
 import { Checkbox } from "@/components/ui/checkbox";
 
 export const Route = createFileRoute("/_authenticated/_panel/ventas")({
@@ -396,7 +396,7 @@ function ComprobanteDialog({ ventaId, onClose, venta }: { ventaId: string; onClo
 function Historial() {
   const { data: ventas } = useSuspenseQuery(ventasRecientesQuery());
   const [seleccion, setSeleccion] = useState<Venta | null>(null);
-  const [filtros, setFiltros] = useState({ desde: "", hasta: "", mes: "", producto: "", cajero: "", soloDemo: false });
+  const [filtros, setFiltros] = useState(filtrosInicialesHistorial);
   const filtradas = filtrarVentas(ventas, filtros);
   const resumen = resumenDemo(ventas);
   const productos = [...new Map(ventas.flatMap((v) => v.venta_detalles.filter((d) => d.producto_id).map((d) => [d.producto_id, d.producto_nombre] as const))).entries()];
@@ -404,7 +404,7 @@ function Historial() {
   return (
     <div className="space-y-6">
       {resumen.length > 0 && <section className="space-y-3">
-        <h2 className="text-lg font-semibold">Demostración del examen</h2>
+        <h2 className="text-lg font-semibold">Demostración</h2>
         <div className="overflow-x-auto rounded-lg border">
           <table className="w-full text-sm">
             <thead className="bg-muted/60"><tr><th className="p-3 text-left">Mes</th><th className="p-3 text-right">Transacciones</th><th className="p-3 text-right">Total vendido</th></tr></thead>
@@ -421,7 +421,7 @@ function Historial() {
         <div className="space-y-1"><Label>Cajero</Label><Select value={filtros.cajero || "todos"} onValueChange={(v) => setFiltros({ ...filtros, cajero: v === "todos" ? "" : v })}><SelectTrigger aria-label="Filtrar por cajero"><SelectValue /></SelectTrigger><SelectContent><SelectItem value="todos">Todos los cajeros</SelectItem>{cajeros.map(([id, nombre]) => id && <SelectItem key={id} value={id}>{nombre}</SelectItem>)}</SelectContent></Select></div>
         <div className="flex items-center gap-2 self-end py-2"><Checkbox id="ventas-demo" checked={filtros.soloDemo} onCheckedChange={(v) => setFiltros({ ...filtros, soloDemo: v === true })} /><Label htmlFor="ventas-demo">Solo demostración</Label></div>
       </div>
-      <div className="flex flex-wrap items-center justify-between gap-2 text-sm"><span>{filtradas.length} transacciones · {formatCordobas(filtradas.reduce((s, v) => s + Number(v.total), 0))}</span><Button variant="outline" size="sm" onClick={() => setFiltros({ desde: "", hasta: "", mes: "", producto: "", cajero: "", soloDemo: false })}>Limpiar filtros</Button></div>
+      <div className="flex flex-wrap items-center justify-between gap-2 text-sm"><span>{filtradas.length} transacciones · {formatCordobas(filtradas.reduce((s, v) => s + Number(v.total), 0))}</span><Button variant="outline" size="sm" onClick={() => setFiltros(filtrosInicialesHistorial())}>Limpiar filtros</Button></div>
     <Panel titulo="Historial de ventas" acciones={<span className="text-xs text-muted-foreground">{filtradas.length} registros</span>}>
       <div className="-mx-5 -my-5 overflow-x-auto">
         <table className="w-full text-sm">

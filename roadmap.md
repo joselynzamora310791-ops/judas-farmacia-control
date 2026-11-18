@@ -1,5 +1,8 @@
 # Roadmap — Farmacia San Judas SIG
 
+- [x] Cambiar el título a Demostración y mostrar por defecto las 30 ventas, separadas de las ventas ordinarias, sin modificar datos
+- [x] Verificar 10 ventas de demostración por mes y conservar acceso al historial completo
+
 - [x] Registrar exactamente 30 ventas de demostración, 10 por mes, sin duplicados y con inventario coherente
 - [x] Consultar historial por fecha, mes, producto y cajero; mostrar resumen mensual de demostración
 - [x] Verificar facturas, detalles, existencias y consultas en pantalla

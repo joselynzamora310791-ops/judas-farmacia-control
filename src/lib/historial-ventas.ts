@@ -4,6 +4,10 @@ export type VentaFiltrable = {
 };
 export type FiltrosVentas = { desde: string; hasta: string; mes: string; producto: string; cajero: string; soloDemo: boolean };
 
+export function filtrosInicialesHistorial(): FiltrosVentas {
+  return { desde: "", hasta: "", mes: "", producto: "", cajero: "", soloDemo: true };
+}
+
 export function fechaVenta(fecha: string): string {
   return new Intl.DateTimeFormat("en-CA", { timeZone: "America/Managua", year: "numeric", month: "2-digit", day: "2-digit" }).format(new Date(fecha));
 }
